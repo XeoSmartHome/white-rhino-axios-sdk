@@ -1,0 +1,13 @@
+{
+  "name": "white-rhino-axios-sdk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "generate": "npx openapi-generator-cli generate -g typescript-axios -i xeosmarthome.yml -o src/"
+  },
+  "private": true,
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.12.0"
+  }
+}

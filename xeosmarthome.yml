@@ -1,0 +1,1597 @@
+---
+openapi: 3.0.3
+info:
+  title: Title
+  description: Title
+  version: 2.0.0
+servers:
+  - url: https://api.staging.xeosmarthome.com
+paths:
+  /auth-service/login:
+    post:
+      operationId: login
+      description: Login a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+              example:
+                email: "claudiu.neamtu@email.com"
+                password: "Test1234!"
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessfulAuthentication'
+  /auth-service/login/google:
+    post:
+      operationId: connectWithGoogle
+      description: Connect with google
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idToken:
+                  type: string
+                  format: jwt
+                  description: Google token
+              required:
+                - idToken
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessfulAuthentication'
+  /auth-service/session:
+    post:
+      operationId: createSession
+      description: Create a new session
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+                    description: Session id
+                required:
+                  - sessionId
+  /accounts-service/accounts:
+    post:
+      operationId: createAccount
+      description: Create a new account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  description: First name of the user
+                lastName:
+                  type: string
+                  description: Last name of the user
+                email:
+                  type: string
+                  description: Email address of the user
+                password:
+                  type: string
+                  description: Password of the user
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+              example:
+                firstName: "Claudiu"
+                lastName: "Neamtu"
+                email: "claudiu.neamtu@email.com"
+                password: "Test1234!"
+      responses:
+        '200':
+          $ref: '#/components/responses/SuccessfulAuthentication'
+  /accounts-service/accounts/me:
+    get:
+      operationId: getUserProfile
+      description: Get user profile
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/UserProfile'
+                required:
+                  - user
+  /accounts-service/accounts/me/name:
+    put:
+      operationId: updateUserName
+      description: Update first name and last name of the user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+              required:
+                - firstName
+                - lastName
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                    required:
+                      - firstName
+                      - lastName
+                required:
+                  - user
+
+  /accounts-service/accounts/me/email:
+    put:
+      operationId: updateUserEmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                required:
+                  - email
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+  /accounts-service/accounts/me/phone-number:
+    put:
+      operationId: updateUserPhoneNumber
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneNumber:
+                  type: string
+              required:
+                - phoneNumber
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      phoneNumber:
+                        type: string
+                    required:
+                      - phoneNumber
+                required:
+                  - user
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                  - error
+  /accounts-service/update-password:
+    post:
+      operationId: updateUserPassword
+      description: update password of the user
+      requestBody:
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPassword:
+                  type: string
+                oldPassword:
+                  type: string
+              required:
+                - newPassword
+                - oldPassword
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+  /accounts-service/accounts/reset-password:
+    post:
+      operationId: resetPassword
+      description: Reset password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required:
+                - email
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token to keep track of the reset password process
+                  expiresAt:
+                    type: string
+                    format: 'date-time'
+                    description: Expiration date of the token
+                required:
+                  - token
+                  - expiresAt
+
+  /accounts-service/accounts/reset-password/check-verification-code:
+    post:
+      summary: Check reset password verification code
+      operationId: checkResetPasswordVerificationCode
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                verificationCode:
+                  type: string
+              required:
+                - token
+                - verificationCode
+      responses:
+        200:
+          description: Successful operation
+
+  /accounts-service/accounts/reset-password/confirm:
+    post:
+      summary: Confirm reset password
+      operationId: confirmResetPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                verificationCode:
+                  type: string
+                password:
+                  type: string
+              required:
+                - token
+                - verificationCode
+                - password
+      responses:
+        200:
+          description: Successful operation
+
+  /devices-service/access-token:
+    get:
+      operationId: getDevicesAccessToken
+      description: Get access token for devices
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    description: Access token
+                  userId:
+                    type: string
+                    description: User id
+                required:
+                  - accessToken
+                  - userId
+
+  /devices-service/devices:
+    get:
+      operationId: getDevices
+      description: Get all devices
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  devices:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: '#/components/schemas/Device'
+                required:
+                  - devices
+    post:
+      operationId: registerDevice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                serialKey:
+                  type: string
+                name:
+                  type: string
+              required:
+                - serialKey
+                - name
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  device:
+                    $ref: '#/components/schemas/Device'
+                required:
+                  - device
+  /devices-service/devices/{deviceId}:
+    delete:
+      summary: Delete device
+      operationId: deleteDevice
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  device:
+                    $ref: '#/components/schemas/Device'
+                required:
+                  - device
+  /devices-service/devices/{deviceId}/photo:
+    parameters:
+      - name: deviceId
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      operationId: updateDevicePhoto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                photoUri:
+                  type: string
+                  format: string
+              required:
+                - photoUri
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  device:
+                    $ref: '#/components/schemas/Device'
+                required:
+                  - device
+
+  # add action to device
+  /devices-service/devices/{deviceId}/actions:
+    post:
+      operationId: executeDeviceAction
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: Action uri
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+  /devices-service/devices/{deviceId}/name:
+    put:
+      operationId: updateDeviceName
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required:
+                - name
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  device:
+                    $ref: '#/components/schemas/Device'
+                required:
+                  - device
+  /devices-service/execute-action:
+    post:
+      operationId: executeAction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  type: string
+                actionUri:
+                  type: string
+                parameters:
+                  type: object
+                  additionalProperties: true
+              required:
+                - deviceId
+                - actionUri
+                - parameters
+      responses:
+        '200':
+          description: Successful operation
+
+  /devices-service/devices/{deviceId}/tasks:
+    post:
+      operationId: createDeviceTask
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                actionId:
+                  type: string
+                parameters:
+                  type: object
+                cron:
+                  type: string
+              required:
+                - name
+                - actionId
+                - parameters
+                - cron
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  device:
+                    $ref: '#/components/schemas/Device'
+                required:
+                  - device
+
+  /devices-service/devices/{deviceId}/tasks/{taskId}:
+    put:
+      operationId: updateDeviceTask
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                parameters:
+                  type: object
+                cron:
+                  type: string
+                enabled:
+                  type: boolean
+              required:
+                - name
+                - actionId
+                - parameters
+                - cron
+                - enabled
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  device:
+                    $ref: '#/components/schemas/Device'
+                required:
+                  - device
+    delete:
+      operationId: deleteDeviceTask
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  device:
+                    $ref: '#/components/schemas/Device'
+                required:
+                  - device
+
+  /rooms-service/rooms:
+    get:
+      operationId: getRooms
+      description: Get all rooms
+      security:
+        - ApiKeyAuth: [ ]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rooms:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: '#/components/schemas/Room'
+                required:
+                  - rooms
+    post:
+      operationId: createRoom
+      description: Create a room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+              required:
+                - name
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    $ref: "#/components/schemas/Room"
+                required:
+                  - room
+  /rooms-service/rooms/{roomId}:
+    parameters:
+      - in: path
+        name: roomId
+        required: true
+        schema:
+          type: string
+    patch:
+      operationId: updateRoom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    $ref: "#/components/schemas/Room"
+                required:
+                  - room
+    delete:
+      operationId: deleteRoom
+      description: Delete a room by id
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    $ref: "#/components/schemas/Room"
+                required:
+                  - room
+  /rooms-service/rooms/{roomId}/name:
+    put:
+      summary: Update room name
+      operationId: updateRoomName
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required:
+                - name
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    $ref: "#/components/schemas/Room"
+                required:
+                  - room
+
+  /rooms-service/rooms/{roomId}/devices:
+    post:
+      summary: Add device to room
+      operationId: addDeviceToRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  type: string
+              required:
+                - deviceId
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    $ref: "#/components/schemas/Room"
+                required:
+                  - room
+  /rooms-service/rooms/{roomId}/devices/{deviceId}:
+    delete:
+      summary: Remove device from room
+      operationId: removeDeviceFromRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    $ref: "#/components/schemas/Room"
+                required:
+                  - room
+
+  # Scenes api
+  /scenes-service/scenes:
+    get:
+      summary: Get all scenes
+      operationId: getScenes
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scenes:
+                    type: array
+                    nullable: true
+                    items:
+                      $ref: '#/components/schemas/Scene'
+                required:
+                  - scenes
+    post:
+      summary: Create a scene
+      operationId: createScene
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required:
+                - name
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scene:
+                    $ref: "#/components/schemas/Scene"
+                required:
+                  - scene
+
+  /scenes-service/scenes/{sceneId}:
+    parameters:
+      - in: path
+        name: sceneId
+        required: true
+        schema:
+          type: string
+    delete:
+      summary: Delete scene by id
+      operationId: deleteScene
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scene:
+                    $ref: "#/components/schemas/Scene"
+                required:
+                  - scene
+    put:
+      summary: Update scene by id
+      operationId: updateScene
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                actions:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SceneAction'
+              required:
+                - name
+                - actions
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scene:
+                    $ref: "#/components/schemas/Scene"
+                required:
+                  - scene
+  /scenes-service/scenes/{sceneId}/apply:
+    parameters:
+      - in: path
+        name: sceneId
+        description: If of the scene to be applied
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Apply scene by id
+      operationId: applyScene
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requestId:
+                    type: string
+                required:
+                  - requestId
+
+  /sensors-service/devices/{deviceId}/sensors:
+    parameters:
+      - in: path
+        name: deviceId
+        description: Id of the device to get sensors from
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get sensors data from device
+      operationId: getDeviceSensorsData
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDeviceSensorsDataResponse'
+
+  /control-nodes-sessions/users/sessions:
+    get:
+      summary: Get devices sessions
+      operationId: getDevicesSessions
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DeviceSession'
+
+security:
+  - ApiKeyAuth: [ ]
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Access-Token
+  responses:
+    SuccessfulAuthentication:
+      description: Successful registration
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              accessToken:
+                type: string
+                description: Access token
+              refreshToken:
+                type: string
+                description: Refresh token
+            required:
+              - accessToken
+              - refreshToken
+  schemas:
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the user
+        firstName:
+          type: string
+          description: First name of the user
+        lastName:
+          type: string
+          description: Last name of the user
+        email:
+          type: string
+          description: Email address of the user
+        photo:
+          type: string
+          description: Photo of the user
+        phoneNumber:
+          type: string
+          description: Phone number of the user
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+    ActionParameter:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        uri:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum:
+            - NUMBER
+            - TIME_INTERVAL
+        inputType:
+          type: string
+          enum:
+            - SLIDER
+            - DROPDOWN
+            - COLOR_PICKER
+        unit:
+          type: string
+          enum:
+            - CELSIUS
+            - MINUTE
+            - SECONDS
+            - HOUR
+            - COLOR
+            - NONE
+        maxValue:
+          type: number
+        minValue:
+          type: number
+        defaultValue:
+          oneOf:
+            - type: string
+            - type: number
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              value:
+                type: object
+            required:
+              - label
+              - value
+      required:
+        - id
+        - name
+        - description
+        - type
+        - inputType
+        - uri
+    BaseAction:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        uri:
+          type: string
+        parameters:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionParameter"
+      required:
+        - id
+        - name
+        - description
+        - uri
+        - parameters
+    DeviceType:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+          format: url
+        actions:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DeviceAction"
+        sensors:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DeviceSensor"
+      required:
+        - id
+        - name
+        - description
+        - image
+        - actions
+        - sensors
+    Device:
+      description: XeoSmartHome device
+      properties:
+        id:
+          type: string
+        serialKey:
+          type: string
+          description: Unique serial key of the device, set by the manufacturer
+        name:
+          type: string
+        image:
+          type: string
+          format: url
+        tasks:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DeviceTask"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        type:
+          "$ref": "#/components/schemas/DeviceType"
+      required:
+        - id
+        - serialKey
+        - name
+        - image
+        - tasks
+        - createdAt
+        - updatedAt
+        - type
+        - sensors
+    Room:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        devices:
+          description: Array of object id in the room.
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - devices
+        - createdAt
+        - updatedAt
+    RoomWithDevices:
+      allOf:
+        - "$ref": "#/components/schemas/Room"
+      properties:
+        devices:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Device"
+
+    ExecutionTriggers:
+      description: Defines what can trigger the execution of the task
+      properties:
+        live:
+          type: boolean
+          description: If true, the task can be executed live
+        schedule:
+          type: boolean
+          description: If true, the task can be executed on a schedule
+        widget:
+          type: boolean
+          description: If true, the task can be executed from a widget
+
+    SwitchAction:
+      description: This is a 2 or more state action, it can be used for on & off action
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - SWITCH
+        name:
+          type: string
+        description:
+          type: string
+        executionTriggers:
+          "$ref": "#/components/schemas/ExecutionTriggers"
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/BaseAction"
+      required:
+        - id
+        - type
+        - name
+        - description
+        - options
+        - executionTriggers
+    ButtonAction:
+      description: Push button action
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - BUTTON
+        name:
+          type: string
+        description:
+          type: string
+        uri:
+          type: string
+        executionTriggers:
+          $ref: "#/components/schemas/ExecutionTriggers"
+        parameters:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionParameter"
+      required:
+        - id
+        - name
+        - description
+        - options
+        - type
+        - uri
+        - executionTriggers
+        - parameters
+    ColorPickerAction:
+      description: a color picker button that display the current color
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - COLOR_PICKER
+        name:
+          type: string
+        description:
+          type: string
+        uri:
+          type: string
+        executionTriggers:
+          "$ref": "#/components/schemas/ExecutionTriggers"
+      required:
+        - id
+        - name
+        - description
+        - type
+        - uri
+        - executionTriggers
+
+    DeviceAction:
+      oneOf:
+        - $ref: "#/components/schemas/SwitchAction"
+        - $ref: "#/components/schemas/ButtonAction"
+        - $ref: "#/components/schemas/ColorPickerAction"
+    SceneAction:
+      description: Action to be executed in a scene
+      properties:
+        id:
+          description: Id of the action
+          type: string
+          format: uuid
+        deviceId:
+          description: Id of the device that will execute the action
+          type: string
+          format: uuid
+        actionTypeId:
+          description: Id of the action type
+          type: string
+          format: uuid
+        uri:
+          description: Uri of the action
+          type: string
+        parameters:
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+      required:
+        - id
+        - name
+        - deviceId
+        - actionTypeId
+        - parameters
+        - uri
+
+    Scene:
+      properties:
+        id:
+          type: string
+          description: Id of the scene
+        name:
+          type: string
+          description: Name of the scene
+        actions:
+          type: array
+          description: Array of actions to be executed in the scene
+          nullable: false
+          items:
+            $ref: '#/components/schemas/SceneAction'
+      required:
+        - id
+        - name
+        - actions
+
+    DeviceTask:
+      description: Task to be executed by a device
+      properties:
+        id:
+          type: string
+          description: Id of the task
+        name:
+          type: string
+          description: Name of the task
+        actionId:
+          type: string
+          description: Id of the action to be executed
+        parameters:
+          type: object
+          description: Parameters of the action
+        cron:
+          type: string
+          description: Cron expression to schedule the task
+        enabled:
+          type: boolean
+          description: If the task is enabled
+      required:
+        - id
+        - name
+        - actionId
+        - parameters
+        - cron
+        - enabled
+
+    EnhancedDeviceTask:
+      description: Task to be executed by a device
+      properties:
+        id:
+          type: string
+          description: Id of the task
+        name:
+          type: string
+          description: Name of the task
+        action:
+          $ref: "#/components/schemas/DeviceAction"
+        parameters:
+          type: object
+          description: Parameters of the action
+        enabled:
+          type: boolean
+          description: If the task is enabled
+        cron:
+          type: string
+          description: Cron expression to schedule the task
+        device:
+          type: object
+          properties:
+            name:
+              type: string
+            id:
+              type: string
+          required:
+            - name
+            - id
+      required:
+        - id
+        - action
+        - name
+        - parameters
+        - enabled
+        - device
+        - cron
+    DeviceActionLog:
+      description: Log of a device
+      properties:
+        id:
+          type: string
+          description: Id of the log
+        deviceId:
+          type: string
+          description: Id of the device
+        actionId:
+          type: string
+          description: Id of the action
+        parameters:
+          type: object
+          description: Parameters of the action
+        createdAt:
+          type: string
+          format: date-time
+          description: Date of the log
+        status:
+          oneOf:
+            - type: string
+              enum:
+                - SUCCESS
+                - ERROR
+                - PENDING
+                - TIMEOUT
+      required:
+        - id
+        - deviceId
+        - actionId
+        - parameters
+        - createdAt
+        - status
+    DeviceSensor:
+      description: Sensor of a device
+      properties:
+        id:
+          type: string
+          description: Id of the sensor
+        name:
+          type: string
+          description: Name of the sensor
+        uri:
+          type: string
+          description: Uri of the sensor
+        unit:
+          type: string
+          description: Unit of the sensor's value
+        minValue:
+          type: number
+          description: Minimum value of the sensor
+        maxValue:
+          type: number
+          description: Maximum value of the sensor
+        decimalPlaces:
+          type: integer
+          description: Number of decimal places of the sensor's value
+        color:
+          type: string
+          description: Color of the sensor
+      required:
+        - id
+        - name
+        - uri
+        - unit
+        - minValue
+        - maxValue
+        - decimalPlaces
+        - color
+
+    DeviceSensorData:
+      properties:
+        id:
+          type: string
+          description: Id of the sensor
+        uri:
+          type: string
+          description: Uri of the sensor
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: number
+              value:
+                type: number
+            required:
+              - timestamp
+              - value
+      required:
+        - id
+        - data
+        - uri
+
+    GetDeviceSensorsDataResponse:
+      description: Response of the get device sensors data endpoint
+      properties:
+        sensors:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeviceSensorData"
+      required:
+        - data
+
+    ModuleLayout:
+      description: Type of a module
+      type: string
+      enum:
+        - STRIPE
+        - GRID
+
+    Module:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the module
+        name:
+          type: string
+          description: Name of the module
+        layout:
+          $ref: "#/components/schemas/ModuleLayout"
+        contentType:
+          enum:
+            - DEVICES
+            - SCENES
+            - ROOMS
+            - MIXED
+      required:
+        - id
+        - name
+        - layout
+        - contentType
+
+    DeviceSession:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the session
+        deviceId:
+          type: string
+          description: Id of the device
+        deviceSessionId:
+          type: string
+          description: Id of the session on the device
+        userId:
+          type: string
+          description: Id of the user
+        lastConnection:
+          type: string
+          format: date-time
+          description: Last connection of the device
+      required:
+        - id
+        - deviceId
+        - deviceSessionId
+        - userId
+        - lastConnection
