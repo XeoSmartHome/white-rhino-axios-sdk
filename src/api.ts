@@ -61,6 +61,12 @@ export interface ActionParameter {
     'type': ActionParameterTypeEnum;
     /**
      * 
+     * @type {ActionParameterDataType}
+     * @memberof ActionParameter
+     */
+    'dataType'?: ActionParameterDataType;
+    /**
+     * 
      * @type {string}
      * @memberof ActionParameter
      */
@@ -120,6 +126,30 @@ export const ActionParameterUnitEnum = {
 } as const;
 
 export type ActionParameterUnitEnum = typeof ActionParameterUnitEnum[keyof typeof ActionParameterUnitEnum];
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const ActionParameterDataType = {
+    Uint8: 'uint8',
+    Int8: 'int8',
+    Uint16: 'uint16',
+    Int16: 'int16',
+    Uint32: 'uint32',
+    Int32: 'int32',
+    Uint64: 'uint64',
+    Int64: 'int64',
+    Float16: 'float16',
+    Float32: 'float32',
+    Float64: 'float64',
+    String: 'string'
+} as const;
+
+export type ActionParameterDataType = typeof ActionParameterDataType[keyof typeof ActionParameterDataType];
+
 
 /**
  * @type ActionParameterDefaultValue
