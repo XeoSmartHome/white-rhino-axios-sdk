@@ -142,7 +142,6 @@ export const ActionParameterDataType = {
     Int32: 'int32',
     Uint64: 'uint64',
     Int64: 'int64',
-    Float16: 'float16',
     Float32: 'float32',
     Float64: 'float64',
     String: 'string'

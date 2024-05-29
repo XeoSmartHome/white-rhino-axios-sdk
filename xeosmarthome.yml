@@ -1058,7 +1058,6 @@ components:
         - int32
         - uint64
         - int64
-        - float16
         - float32
         - float64
         - string
