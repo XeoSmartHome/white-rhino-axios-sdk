@@ -21,6 +21,9 @@ paths:
                   type: string
                 password:
                   type: string
+                otp:
+                  type: string
+                  description: One time password for two-factor authentication
               required:
                 - email
                 - password

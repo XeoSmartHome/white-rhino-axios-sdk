@@ -1112,6 +1112,12 @@ export interface LoginRequest {
      * @memberof LoginRequest
      */
     'password': string;
+    /**
+     * One time password for two-factor authentication
+     * @type {string}
+     * @memberof LoginRequest
+     */
+    'otp'?: string;
 }
 /**
  * 
