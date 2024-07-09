@@ -69,6 +69,61 @@ paths:
                     description: Session id
                 required:
                   - sessionId
+  /auth-service/otp:
+    post:
+      operationId: enableOTP
+      description: Enable two-factor authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: Password of the user
+              required:
+                - password
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  otp:
+                    type: string
+                    description: Otp secret url
+                    format: URL
+                required:
+                  - otp
+    delete:
+      operationId: disableOTP
+      description: Disable two-factor authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: Password of the user
+              required:
+                - password
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
   /accounts-service/accounts:
     post:
       operationId: createAccount

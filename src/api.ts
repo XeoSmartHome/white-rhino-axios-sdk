@@ -848,6 +848,45 @@ export interface DeviceType {
     'sensors': Array<DeviceSensor>;
 }
 /**
+ * 
+ * @export
+ * @interface DisableOTP200Response
+ */
+export interface DisableOTP200Response {
+    /**
+     * 
+     * @type {string}
+     * @memberof DisableOTP200Response
+     */
+    'message': string;
+}
+/**
+ * 
+ * @export
+ * @interface EnableOTP200Response
+ */
+export interface EnableOTP200Response {
+    /**
+     * Otp secret url
+     * @type {string}
+     * @memberof EnableOTP200Response
+     */
+    'otp': string;
+}
+/**
+ * 
+ * @export
+ * @interface EnableOTPRequest
+ */
+export interface EnableOTPRequest {
+    /**
+     * Password of the user
+     * @type {string}
+     * @memberof EnableOTPRequest
+     */
+    'password': string;
+}
+/**
  * Task to be executed by a device
  * @export
  * @interface EnhancedDeviceTask
@@ -2192,6 +2231,78 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Disable two-factor authentication
+         * @param {EnableOTPRequest} [enableOTPRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        disableOTP: async (enableOTPRequest?: EnableOTPRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth-service/otp`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-Access-Token", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(enableOTPRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Enable two-factor authentication
+         * @param {EnableOTPRequest} [enableOTPRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        enableOTP: async (enableOTPRequest?: EnableOTPRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth-service/otp`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication ApiKeyAuth required
+            await setApiKeyToObject(localVarHeaderParameter, "X-Access-Token", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(enableOTPRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 
          * @param {ExecuteActionRequest} [executeActionRequest] 
          * @param {*} [options] Override http request option.
@@ -3225,6 +3336,30 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Disable two-factor authentication
+         * @param {EnableOTPRequest} [enableOTPRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async disableOTP(enableOTPRequest?: EnableOTPRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DisableOTP200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.disableOTP(enableOTPRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.disableOTP']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Enable two-factor authentication
+         * @param {EnableOTPRequest} [enableOTPRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async enableOTP(enableOTPRequest?: EnableOTPRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<EnableOTP200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.enableOTP(enableOTPRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.enableOTP']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 
          * @param {ExecuteActionRequest} [executeActionRequest] 
          * @param {*} [options] Override http request option.
@@ -3655,6 +3790,24 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.deleteScene(sceneId, options).then((request) => request(axios, basePath));
         },
         /**
+         * Disable two-factor authentication
+         * @param {EnableOTPRequest} [enableOTPRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        disableOTP(enableOTPRequest?: EnableOTPRequest, options?: any): AxiosPromise<DisableOTP200Response> {
+            return localVarFp.disableOTP(enableOTPRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Enable two-factor authentication
+         * @param {EnableOTPRequest} [enableOTPRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        enableOTP(enableOTPRequest?: EnableOTPRequest, options?: any): AxiosPromise<EnableOTP200Response> {
+            return localVarFp.enableOTP(enableOTPRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 
          * @param {ExecuteActionRequest} [executeActionRequest] 
          * @param {*} [options] Override http request option.
@@ -4041,6 +4194,28 @@ export class DefaultApi extends BaseAPI {
      */
     public deleteScene(sceneId: string, options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).deleteScene(sceneId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Disable two-factor authentication
+     * @param {EnableOTPRequest} [enableOTPRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public disableOTP(enableOTPRequest?: EnableOTPRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).disableOTP(enableOTPRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Enable two-factor authentication
+     * @param {EnableOTPRequest} [enableOTPRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public enableOTP(enableOTPRequest?: EnableOTPRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).enableOTP(enableOTPRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
